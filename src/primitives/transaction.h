@@ -15,6 +15,7 @@
 static const int SERIALIZE_TRANSACTION_NO_WITNESS = 0x40000000;
 
 /** An outpoint - a combination of a transaction hash and an index n into its vout */
+//交易输入中的交易指针字段，包括指向被花费的UTXO所在的交易哈希以及被花费的UTXO索引
 class COutPoint
 {
 public:
