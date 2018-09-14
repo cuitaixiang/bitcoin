@@ -19,8 +19,8 @@ static const int SERIALIZE_TRANSACTION_NO_WITNESS = 0x40000000;
 class COutPoint
 {
 public:
-    uint256 hash;
-    uint32_t n;
+    uint256 hash;//交易哈希
+    uint32_t n;//被引用的UTXO索引，第一个是0
 
     COutPoint(): n((uint32_t) -1) { }
     COutPoint(const uint256& hashIn, uint32_t nIn): hash(hashIn), n(nIn) { }
@@ -36,6 +36,7 @@ public:
     void SetNull() { hash.SetNull(); n = (uint32_t) -1; }
     bool IsNull() const { return (hash.IsNull() && n == (uint32_t) -1); }
 
+    //定义运算符
     friend bool operator<(const COutPoint& a, const COutPoint& b)
     {
         int cmp = a.hash.Compare(b.hash);
@@ -59,12 +60,13 @@ public:
  * transaction's output that it claims and a signature that matches the
  * output's public key.
  */
+//交易输入结构
 class CTxIn
 {
 public:
-    COutPoint prevout;
-    CScript scriptSig;
-    uint32_t nSequence;
+    COutPoint prevout;//引用的输出
+    CScript scriptSig;//解锁脚本
+    uint32_t nSequence;//序列号
     CScriptWitness scriptWitness; //! Only serialized through CTransaction
 
     /* Setting nSequence to this value for every input in a transaction
@@ -111,6 +113,7 @@ public:
         READWRITE(nSequence);
     }
 
+    //重载运算符
     friend bool operator==(const CTxIn& a, const CTxIn& b)
     {
         return (a.prevout   == b.prevout &&
@@ -132,8 +135,8 @@ public:
 class CTxOut
 {
 public:
-    CAmount nValue;
-    CScript scriptPubKey;
+    CAmount nValue;//输出值
+    CScript scriptPubKey;//锁定脚本
 
     CTxOut()
     {
@@ -177,13 +180,16 @@ public:
 
 struct CMutableTransaction;
 
+//序列化与反序列化交易
 /**
+ *基本交易格式
  * Basic transaction serialization format:
  * - int32_t nVersion
  * - std::vector<CTxIn> vin
  * - std::vector<CTxOut> vout
  * - uint32_t nLockTime
  *
+ * 扩展交易格式
  * Extended transaction serialization format:
  * - int32_t nVersion
  * - unsigned char dummy = 0x00
@@ -279,14 +285,14 @@ public:
     // actually immutable; deserialization and assignment are implemented,
     // and bypass the constness. This is safe, as they update the entire
     // structure, including the hash.
-    const std::vector<CTxIn> vin;
-    const std::vector<CTxOut> vout;
-    const int32_t nVersion;
-    const uint32_t nLockTime;
+    const std::vector<CTxIn> vin;//输入集
+    const std::vector<CTxOut> vout;//输出集
+    const int32_t nVersion;//版本
+    const uint32_t nLockTime;//时钟时间
 
 private:
     /** Memory only. */
-    const uint256 hash;
+    const uint256 hash;//交易哈希值，只保存于内存之中
 
     uint256 ComputeHash() const;
 

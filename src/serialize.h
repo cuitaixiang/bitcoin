@@ -157,6 +157,7 @@ enum
  * code. Adding "ADD_SERIALIZE_METHODS" in the body of the class causes these wrappers to be
  * added as members. 
  */
+//序列化和反序列化方法
 #define ADD_SERIALIZE_METHODS                                         \
     template<typename Stream>                                         \
     void Serialize(Stream& s) const {                                 \

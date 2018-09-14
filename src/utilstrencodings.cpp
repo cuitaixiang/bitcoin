@@ -32,6 +32,7 @@ std::string SanitizeString(const std::string& str, int rule)
     return strResult;
 }
 
+//char型字符与十六进制数字的映射
 const signed char p_util_hexdigit[256] =
 { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -55,6 +56,7 @@ signed char HexDigit(char c)
     return p_util_hexdigit[(unsigned char)c];
 }
 
+//是否16进制数
 bool IsHex(const std::string& str)
 {
     for(std::string::const_iterator it(str.begin()); it != str.end(); ++it)
@@ -65,6 +67,7 @@ bool IsHex(const std::string& str)
     return (str.size() > 0) && (str.size()%2 == 0);
 }
 
+//是否16进制数（0x开头）
 bool IsHexNumber(const std::string& str)
 {
     size_t starting_location = 0;
@@ -78,6 +81,7 @@ bool IsHexNumber(const std::string& str)
     return (str.size() > starting_location);
 }
 
+//解析其中的16进制数，并将其转换成字符串
 std::vector<unsigned char> ParseHex(const char* psz)
 {
     // convert hex dump to vector
@@ -87,18 +91,19 @@ std::vector<unsigned char> ParseHex(const char* psz)
         while (isspace(*psz))
             psz++;
         signed char c = HexDigit(*psz++);
-        if (c == (signed char)-1)
+        if (c == (signed char)-1)//映射值为-1，非法
             break;
-        unsigned char n = (c << 4);
+        unsigned char n = (c << 4);//十六进制数移向高4位
         c = HexDigit(*psz++);
         if (c == (signed char)-1)
             break;
-        n |= c;
+        n |= c;//组合低4位
         vch.push_back(n);
     }
     return vch;
 }
 
+//解析其中的16进制数，并将其转换成字符串
 std::vector<unsigned char> ParseHex(const std::string& str)
 {
     return ParseHex(str.c_str());
