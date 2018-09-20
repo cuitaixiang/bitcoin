@@ -18,6 +18,7 @@
 typedef uint256 ChainCode;
 
 /** A hasher class for Bitcoin's 256-bit hash (double SHA-256). */
+//双SHA-256计算
 class CHash256 {
 private:
     CSHA256 sha;
@@ -26,8 +27,8 @@ public:
 
     void Finalize(unsigned char hash[OUTPUT_SIZE]) {
         unsigned char buf[CSHA256::OUTPUT_SIZE];
-        sha.Finalize(buf);
-        sha.Reset().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(hash);
+        sha.Finalize(buf);//SHA-256第一次计算值
+        sha.Reset().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(hash);//第二次计算SHA-256
     }
 
     CHash256& Write(const unsigned char *data, size_t len) {
@@ -42,6 +43,7 @@ public:
 };
 
 /** A hasher class for Bitcoin's 160-bit hash (SHA-256 + RIPEMD-160). */
+//RIPEMD-160(SHA-256)
 class CHash160 {
 private:
     CSHA256 sha;
@@ -50,8 +52,8 @@ public:
 
     void Finalize(unsigned char hash[OUTPUT_SIZE]) {
         unsigned char buf[CSHA256::OUTPUT_SIZE];
-        sha.Finalize(buf);
-        CRIPEMD160().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(hash);
+        sha.Finalize(buf);//第一次SHA-256计算值
+        CRIPEMD160().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(hash);//第二次RIPEMD-160计算值
     }
 
     CHash160& Write(const unsigned char *data, size_t len) {
@@ -66,6 +68,7 @@ public:
 };
 
 /** Compute the 256-bit hash of an object. */
+//计算一个对象的256位hash
 template<typename T1>
 inline uint256 Hash(const T1 pbegin, const T1 pend)
 {
@@ -77,6 +80,7 @@ inline uint256 Hash(const T1 pbegin, const T1 pend)
 }
 
 /** Compute the 256-bit hash of the concatenation of two objects. */
+//计算两个对象的256hash
 template<typename T1, typename T2>
 inline uint256 Hash(const T1 p1begin, const T1 p1end,
                     const T2 p2begin, const T2 p2end) {
@@ -89,6 +93,7 @@ inline uint256 Hash(const T1 p1begin, const T1 p1end,
 }
 
 /** Compute the 160-bit hash an object. */
+//计算一个对象的160位hash
 template<typename T1>
 inline uint160 Hash160(const T1 pbegin, const T1 pend)
 {
@@ -100,6 +105,7 @@ inline uint160 Hash160(const T1 pbegin, const T1 pend)
 }
 
 /** Compute the 160-bit hash of a vector. */
+//计算unsigned char型数据vector的160位hash
 inline uint160 Hash160(const std::vector<unsigned char>& vch)
 {
     return Hash160(vch.begin(), vch.end());
@@ -138,6 +144,7 @@ public:
         return result;
     }
 
+    //重载操作符<<，起到类似write的作用
     template<typename T>
     CHashWriter& operator<<(const T& obj) {
         // Serialize to this stream
@@ -172,6 +179,7 @@ public:
         }
     }
 
+    //重载操作符>>，起到类似read的作用
     template<typename T>
     CHashVerifier<Source>& operator>>(T& obj)
     {
@@ -182,6 +190,7 @@ public:
 };
 
 /** Compute the 256-bit hash of an object's serialization. */
+//计算对象的hash值
 template<typename T>
 uint256 SerializeHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL_VERSION)
 {
@@ -195,6 +204,7 @@ unsigned int MurmurHash3(unsigned int nHashSeed, const std::vector<unsigned char
 void BIP32Hash(const ChainCode &chainCode, unsigned int nChild, unsigned char header, const unsigned char data[32], unsigned char output[64]);
 
 /** SipHash-2-4 */
+//计算64位SipHash-2-4
 class CSipHasher
 {
 private:

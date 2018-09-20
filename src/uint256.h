@@ -91,6 +91,7 @@ public:
                ((uint64_t)ptr[7]) << 56;
     }
 
+    //添加基本的序列化方法
     template<typename Stream>
     void Serialize(Stream& s) const
     {
@@ -129,6 +130,7 @@ public:
      * when the value can easily be influenced from outside as e.g. a network adversary could
      * provide values to trigger worst-case behavior.
      */
+    //只返回64位
     uint64_t GetCheapHash() const
     {
         return ReadLE64(data);

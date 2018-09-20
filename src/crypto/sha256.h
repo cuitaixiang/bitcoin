@@ -10,10 +10,11 @@
 #include <string>
 
 /** A hasher class for SHA-256. */
+//SHA-256计算
 class CSHA256
 {
 private:
-    uint32_t s[8];
+    uint32_t s[8];//初始参量
     unsigned char buf[64];
     uint64_t bytes;
 

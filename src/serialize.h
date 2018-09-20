@@ -63,6 +63,7 @@ inline T* NCONST_PTR(const T* val)
  * Lowest-level serialization and conversion.
  * @note Sizes of these types are verified in the tests
  */
+//不同数据类型数据最低水平的序列化方法，必须要有write和read方法，也即必须是流类型
 template<typename Stream> inline void ser_writedata8(Stream &s, uint8_t obj)
 {
     s.write((char*)&obj, 1);
@@ -148,6 +149,7 @@ enum
     SER_GETHASH         = (1 << 2),
 };
 
+//序列化读写宏，只传对象
 #define READWRITE(obj)      (::SerReadWrite(s, (obj), ser_action))
 #define READWRITEMANY(...)      (::SerReadWriteMany(s, ser_action, __VA_ARGS__))
 
@@ -157,7 +159,8 @@ enum
  * code. Adding "ADD_SERIALIZE_METHODS" in the body of the class causes these wrappers to be
  * added as members. 
  */
-//序列化和反序列化方法
+//实现了序列化对象的三种方法，这些实际上都是对SerializationOp模板的封装，SerializationOp实现了每个类主体的序列化
+//将宏定义ADD_SERIALIZE_METHODS加入类中实际上是把这些封装作为类的成员
 #define ADD_SERIALIZE_METHODS                                         \
     template<typename Stream>                                         \
     void Serialize(Stream& s) const {                                 \
@@ -168,6 +171,7 @@ enum
         SerializationOp(s, CSerActionUnserialize());                  \
     }
 
+//不同类型数据的序列化与反序列化方法
 template<typename Stream> inline void Serialize(Stream& s, char a    ) { ser_writedata8(s, a); } // TODO Get rid of bare char
 template<typename Stream> inline void Serialize(Stream& s, int8_t a  ) { ser_writedata8(s, a); }
 template<typename Stream> inline void Serialize(Stream& s, uint8_t a ) { ser_writedata8(s, a); }
@@ -192,6 +196,7 @@ template<typename Stream> inline void Unserialize(Stream& s, uint64_t& a) { a = 
 template<typename Stream> inline void Unserialize(Stream& s, float& a   ) { a = ser_uint32_to_float(ser_readdata32(s)); }
 template<typename Stream> inline void Unserialize(Stream& s, double& a  ) { a = ser_uint64_to_double(ser_readdata64(s)); }
 
+//布尔型使用8位的序列化方法
 template<typename Stream> inline void Serialize(Stream& s, bool a)    { char f=a; ser_writedata8(s, f); }
 template<typename Stream> inline void Unserialize(Stream& s, bool& a) { char f=ser_readdata8(s); a=f; }
 
@@ -547,7 +552,7 @@ inline void Unserialize(Stream& is, T& a)
 
 
 
-
+//特殊类型容器等的序列化方法
 
 /**
  * string
@@ -826,6 +831,7 @@ struct CSerActionUnserialize
     constexpr bool ForRead() const { return true; }
 };
 
+//泛型实现
 template<typename Stream, typename T>
 inline void SerReadWrite(Stream& s, const T& obj, CSerActionSerialize ser_action)
 {

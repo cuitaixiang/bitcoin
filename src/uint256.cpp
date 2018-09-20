@@ -23,6 +23,7 @@ std::string base_blob<BITS>::GetHex() const
     return HexStr(std::reverse_iterator<const uint8_t*>(data + sizeof(data)), std::reverse_iterator<const uint8_t*>(data));
 }
 
+//设置data成指定的16进制数
 template <unsigned int BITS>
 void base_blob<BITS>::SetHex(const char* psz)
 {

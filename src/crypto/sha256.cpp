@@ -198,6 +198,7 @@ CSHA256::CSHA256() : bytes(0)
     sha256::Initialize(s);
 }
 
+//data为要计算hash的数据，len为该数据的长度
 CSHA256& CSHA256::Write(const unsigned char* data, size_t len)
 {
     const unsigned char* end = data + len;
@@ -224,6 +225,7 @@ CSHA256& CSHA256::Write(const unsigned char* data, size_t len)
     return *this;
 }
 
+//hash输出值
 void CSHA256::Finalize(unsigned char hash[OUTPUT_SIZE])
 {
     static const unsigned char pad[64] = {0x80};
