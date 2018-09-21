@@ -429,6 +429,7 @@ static bool InterpretBool(const std::string& strValue)
 }
 
 /** Turn -noX into -X=0 */
+//将-noX转换成-X=0，X代表某个名称
 static void InterpretNegativeSetting(std::string& strKey, std::string& strValue)
 {
     if (strKey.length()>3 && strKey[0]=='-' && strKey[1]=='n' && strKey[2]=='o')
@@ -438,6 +439,7 @@ static void InterpretNegativeSetting(std::string& strKey, std::string& strValue)
     }
 }
 
+//解析启动时的程序参量，参量可以以“-”或者“--”或者“-no”开头
 void ArgsManager::ParseParameters(int argc, const char* const argv[])
 {
     LOCK(cs_args);
@@ -482,6 +484,7 @@ std::vector<std::string> ArgsManager::GetArgs(const std::string& strArg) const
     return {};
 }
 
+//是否设置过该参量
 bool ArgsManager::IsArgSet(const std::string& strArg) const
 {
     LOCK(cs_args);
@@ -504,6 +507,7 @@ int64_t ArgsManager::GetArg(const std::string& strArg, int64_t nDefault) const
     return nDefault;
 }
 
+//布尔值：空或者非零代表true，0代表false
 bool ArgsManager::GetBoolArg(const std::string& strArg, bool fDefault) const
 {
     LOCK(cs_args);
@@ -512,6 +516,7 @@ bool ArgsManager::GetBoolArg(const std::string& strArg, bool fDefault) const
     return fDefault;
 }
 
+//软设置：如果设置过该参量则放弃设置，否则设置
 bool ArgsManager::SoftSetArg(const std::string& strArg, const std::string& strValue)
 {
     LOCK(cs_args);
@@ -520,6 +525,7 @@ bool ArgsManager::SoftSetArg(const std::string& strArg, const std::string& strVa
     return true;
 }
 
+//布尔型软设置，转为string类型
 bool ArgsManager::SoftSetBoolArg(const std::string& strArg, bool fValue)
 {
     if (fValue)
@@ -528,6 +534,7 @@ bool ArgsManager::SoftSetBoolArg(const std::string& strArg, bool fValue)
         return SoftSetArg(strArg, std::string("0"));
 }
 
+//强设置，直接覆盖
 void ArgsManager::ForceSetArg(const std::string& strArg, const std::string& strValue)
 {
     LOCK(cs_args);
@@ -645,6 +652,7 @@ void ClearDatadirCache()
     pathCachedNetSpecific = fs::path();
 }
 
+//获取配置文件全路径
 fs::path GetConfigFile(const std::string& confPath)
 {
     fs::path pathConfigFile(confPath);
@@ -668,15 +676,16 @@ void ArgsManager::ReadConfigFile(const std::string& confPath)
         for (boost::program_options::detail::config_file_iterator it(streamConfig, setOptions), end; it != end; ++it)
         {
             // Don't overwrite existing settings so command line settings override bitcoin.conf
-            std::string strKey = std::string("-") + it->string_key;
+            std::string strKey = std::string("-") + it->string_key;//key值前面加"-"符号
             std::string strValue = it->value[0];
             InterpretNegativeSetting(strKey, strValue);
-            if (mapArgs.count(strKey) == 0)
+            if (mapArgs.count(strKey) == 0)//第一次指定
                 mapArgs[strKey] = strValue;
-            mapMultiArgs[strKey].push_back(strValue);
+            mapMultiArgs[strKey].push_back(strValue);//同时存放
         }
     }
     // If datadir is changed in .conf file:
+    //如果在.conf文件中用-datadir重新指定了数据目录，则检查是否存在
     ClearDatadirCache();
     if (!fs::is_directory(GetDataDir(false))) {
         throw std::runtime_error(strprintf("specified data directory \"%s\" does not exist.", gArgs.GetArg("-datadir", "").c_str()));

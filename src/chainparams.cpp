@@ -347,6 +347,7 @@ public:
     }
 };
 
+//全局链端参量
 static std::unique_ptr<CChainParams> globalChainParams;
 
 const CChainParams &Params() {

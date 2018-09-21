@@ -102,13 +102,14 @@ bool AppInit(int argc, char* argv[])
         }
         // Check for -testnet or -regtest parameter (Params() calls are only valid after this clause)
         try {
-            SelectParams(ChainNameFromCommandLine());
+            SelectParams(ChainNameFromCommandLine());//设置相关参量
         } catch (const std::exception& e) {
             fprintf(stderr, "Error: %s\n", e.what());
             return false;
         }
 
         // Error out when loose non-argument tokens are encountered on command line
+        //判断命令行是否有非期望的符号
         for (int i = 1; i < argc; i++) {
             if (!IsSwitchChar(argv[i][0])) {
                 fprintf(stderr, "Error: Command line contains unexpected token '%s', see bitcoind -h for a list of options.\n", argv[i]);
@@ -117,6 +118,7 @@ bool AppInit(int argc, char* argv[])
         }
 
         // -server defaults to true for bitcoind but not for the GUI so do this here
+        //bitcoind默认作为server
         gArgs.SoftSetBoolArg("-server", true);
         // Set this early so that parameter interactions go to console
         InitLogging();

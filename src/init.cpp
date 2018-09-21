@@ -881,6 +881,7 @@ bool AppInitBasicSetup()
     }
 
     // Clean shutdown on SIGTERM
+    //为信号2和信号15注册信号处理函数
     registerSignalHandler(SIGTERM, HandleSIGTERM);
     registerSignalHandler(SIGINT, HandleSIGTERM);
 

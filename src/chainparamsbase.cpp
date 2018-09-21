@@ -83,11 +83,13 @@ std::unique_ptr<CBaseChainParams> CreateBaseChainParams(const std::string& chain
         throw std::runtime_error(strprintf("%s: Unknown chain %s.", __func__, chain));
 }
 
+//设置bitcoin-cli和bitcoind之间共享的参量，RPC通信端口和数据目录
 void SelectBaseParams(const std::string& chain)
 {
     globalChainBaseParams = CreateBaseChainParams(chain);
 }
 
+//获取链的名字
 std::string ChainNameFromCommandLine()
 {
     bool fRegTest = gArgs.GetBoolArg("-regtest", false);

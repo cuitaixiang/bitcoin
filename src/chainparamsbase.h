@@ -13,6 +13,7 @@
  * CBaseChainParams defines the base parameters (shared between bitcoin-cli and bitcoind)
  * of a given instance of the Bitcoin system.
  */
+//bitcoin-cli和bitcoind之间共享的参量，RPC通信端口和数据目录
 class CBaseChainParams
 {
 public:

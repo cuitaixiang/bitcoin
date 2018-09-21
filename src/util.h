@@ -212,7 +212,7 @@ class ArgsManager
 protected:
     mutable CCriticalSection cs_args;
     std::map<std::string, std::string> mapArgs;
-    std::map<std::string, std::vector<std::string>> mapMultiArgs;
+    std::map<std::string, std::vector<std::string>> mapMultiArgs;//mapMultiArgs包含了mapArgs
 public:
     void ParseParameters(int argc, const char*const argv[]);
     void ReadConfigFile(const std::string& confPath);

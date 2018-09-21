@@ -101,6 +101,7 @@ public:
         nSequence = SEQUENCE_FINAL;
     }
 
+    //禁用隐式转换，必须明确调用当前形式的构造函数
     explicit CTxIn(COutPoint prevoutIn, CScript scriptSigIn=CScript(), uint32_t nSequenceIn=SEQUENCE_FINAL);
     CTxIn(uint256 hashPrevTx, uint32_t nOut, CScript scriptSigIn=CScript(), uint32_t nSequenceIn=SEQUENCE_FINAL);
 
@@ -366,6 +367,7 @@ public:
 };
 
 /** A mutable version of CTransaction. */
+//可修改版本的交易类
 struct CMutableTransaction
 {
     std::vector<CTxIn> vin;
