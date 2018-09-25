@@ -26,24 +26,28 @@ static int64_t nTimeOffset = 0;
  *  - Median of other nodes clocks
  *  - The user (asking the user to fix the system clock if the first two disagree)
  */
+//从来不要携带两个时钟源出海，带一个或者三个。三个时钟源分别是：系统时钟，其它节点时钟的中位数，用户
 int64_t GetTimeOffset()
 {
     LOCK(cs_nTimeOffset);
     return nTimeOffset;
 }
 
+//获取调整过后的时间
 int64_t GetAdjustedTime()
 {
     return GetTime() + GetTimeOffset();
 }
 
+//获取绝对值
 static int64_t abs64(int64_t n)
 {
     return (n >= 0 ? n : -n);
 }
 
+//最大采样时钟数据
 #define BITCOIN_TIMEDATA_MAX_SAMPLES 200
-
+//添加其它节点的时间数据，IP和与本地时间的偏移量
 void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample)
 {
     LOCK(cs_nTimeOffset);
@@ -51,10 +55,11 @@ void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample)
     static std::set<CNetAddr> setKnown;
     if (setKnown.size() == BITCOIN_TIMEDATA_MAX_SAMPLES)
         return;
-    if (!setKnown.insert(ip).second)
+    if (!setKnown.insert(ip).second)//保证不重复
         return;
 
     // Add data
+    //静态变量
     static CMedianFilter<int64_t> vTimeOffsets(BITCOIN_TIMEDATA_MAX_SAMPLES, 0);
     vTimeOffsets.input(nOffsetSample);
     LogPrint(BCLog::NET,"added time data, samples %d, offset %+d (%+d minutes)\n", vTimeOffsets.size(), nOffsetSample, nOffsetSample/60);
@@ -76,12 +81,12 @@ void AddTimeData(const CNetAddr& ip, int64_t nOffsetSample)
     // So we should hold off on fixing this and clean it up as part of
     // a timing cleanup that strengthens it in a number of other ways.
     //
-    if (vTimeOffsets.size() >= 5 && vTimeOffsets.size() % 2 == 1)
+    if (vTimeOffsets.size() >= 5 && vTimeOffsets.size() % 2 == 1)//多于5个，并且为奇数个才处理
     {
         int64_t nMedian = vTimeOffsets.median();
         std::vector<int64_t> vSorted = vTimeOffsets.sorted();
         // Only let other nodes change our time by so much
-        if (abs64(nMedian) <= std::max<int64_t>(0, gArgs.GetArg("-maxtimeadjustment", DEFAULT_MAX_TIME_ADJUSTMENT)))
+        if (abs64(nMedian) <= std::max<int64_t>(0, gArgs.GetArg("-maxtimeadjustment", DEFAULT_MAX_TIME_ADJUSTMENT)))//没超过上下限
         {
             nTimeOffset = nMedian;
         }

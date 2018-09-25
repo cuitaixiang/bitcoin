@@ -1316,14 +1316,14 @@ UniValue getchaintips(const JSONRPCRequest& request)
     for (const std::pair<const uint256, CBlockIndex*>& item : mapBlockIndex)
     {
         if (!chainActive.Contains(item.second)) {
-            setOrphans.insert(item.second);
-            setPrevs.insert(item.second->pprev);
+            setOrphans.insert(item.second);//孤儿集合
+            setPrevs.insert(item.second->pprev);//孤儿的前一个
         }
     }
 
     for (std::set<const CBlockIndex*>::iterator it = setOrphans.begin(); it != setOrphans.end(); ++it)
     {
-        if (setPrevs.erase(*it) == 0) {
+        if (setPrevs.erase(*it) == 0) {//分叉点
             setTips.insert(*it);
         }
     }

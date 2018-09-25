@@ -306,6 +306,7 @@ public:
 
     static constexpr int nMedianTimeSpan = 11;
 
+    //获取过去11个区块的中位数时间
     int64_t GetMedianTimePast() const
     {
         int64_t pmedian[nMedianTimeSpan];
