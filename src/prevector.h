@@ -32,6 +32,7 @@
  *  The data type T must be movable by memmove/realloc(). Once we switch to C++,
  *  move constructors can be used instead.
  */
+//vector的替代，非堆分配的实现，存储层要么是直接分配要么是间接分配
 template<unsigned int N, typename T, typename Size = uint32_t, typename Diff = int32_t>
 class prevector {
 public:

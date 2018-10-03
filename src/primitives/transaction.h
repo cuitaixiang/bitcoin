@@ -25,11 +25,12 @@ public:
     COutPoint(): n((uint32_t) -1) { }
     COutPoint(const uint256& hashIn, uint32_t nIn): hash(hashIn), n(nIn) { }
 
-    ADD_SERIALIZE_METHODS;
+    //序列化本质上就是对对象成员依次进行write(),read()
+    ADD_SERIALIZE_METHODS;//添加序列化方法的宏，添加的序列化方法：Serialize(), Unserialize()
 
     template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action) {
-        READWRITE(hash);
+    inline void SerializationOp(Stream& s, Operation ser_action) {//序列化操作
+        READWRITE(hash);//宏定义，传进去要序列化的对象即可
         READWRITE(n);
     }
 
@@ -286,6 +287,7 @@ public:
     // actually immutable; deserialization and assignment are implemented,
     // and bypass the constness. This is safe, as they update the entire
     // structure, including the hash.
+    //安全起见，本地变量定义const，一改俱改，包括hash
     const std::vector<CTxIn> vin;//输入集
     const std::vector<CTxOut> vout;//输出集
     const int32_t nVersion;//版本
@@ -302,14 +304,17 @@ public:
     CTransaction();
 
     /** Convert a CMutableTransaction into a CTransaction. */
+    //此两个构造函数初始化时候会计算hash
     CTransaction(const CMutableTransaction &tx);
     CTransaction(CMutableTransaction &&tx);
 
+    //自定义交易的序列化方法
     template <typename Stream>
     inline void Serialize(Stream& s) const {
         SerializeTransaction(*this, s);
     }
 
+    //用解序列化方法代替反序列化方法
     /** This deserializing constructor is provided instead of an Unserialize method.
      *  Unserialize is not possible, since it would require overwriting const fields. */
     template <typename Stream>
@@ -367,7 +372,7 @@ public:
 };
 
 /** A mutable version of CTransaction. */
-//可修改版本的交易类
+//各字段可修改的交易类
 struct CMutableTransaction
 {
     std::vector<CTxIn> vin;
@@ -378,12 +383,13 @@ struct CMutableTransaction
     CMutableTransaction();
     CMutableTransaction(const CTransaction& tx);
 
+    //自定义的序列化反序列化方法
     template <typename Stream>
     inline void Serialize(Stream& s) const {
         SerializeTransaction(*this, s);
     }
 
-
+    //反序列化即是读，给各个字段赋值
     template <typename Stream>
     inline void Unserialize(Stream& s) {
         UnserializeTransaction(*this, s);

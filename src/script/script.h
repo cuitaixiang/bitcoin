@@ -383,6 +383,7 @@ private:
  * Tests in October 2015 showed use of this reduced dbcache memory usage by 23%
  *  and made an initial sync 13% faster.
  */
+//使用自定义的prevector来减小使用vector相当大的内存开销，尤其是少量小元素的情况
 typedef prevector<28, unsigned char> CScriptBase;
 
 /** Serialized script, used inside transaction inputs and outputs */
