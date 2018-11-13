@@ -43,6 +43,7 @@ const std::vector<unsigned char>& GetObfuscateKey(const CDBWrapper &w);
 
 };
 
+//批量改变（写和删除）
 /** Batch of changes queued to be written to a CDBWrapper */
 class CDBBatch
 {
@@ -290,6 +291,7 @@ public:
         return true;
     }
 
+    //设置同步
     bool Sync()
     {
         CDBBatch batch(*this);

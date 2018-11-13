@@ -22,6 +22,7 @@
 #include <utility>
 #include <vector>
 
+//重写流类型
 template<typename Stream>
 class OverrideStream
 {
@@ -138,6 +139,7 @@ private:
     size_t nPos;
 };
 
+//vector构造的类流接口
 /** Double ended buffer combining vector and stream-like interfaces.
  *
  * >> and << read and write unformatted data using the above serialization templates.
