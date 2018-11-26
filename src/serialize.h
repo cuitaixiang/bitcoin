@@ -783,7 +783,10 @@ void Unserialize(Stream& is, std::set<K, Pred, A>& m)
     }
 }
 
-
+/**
+  指针类型会取其指向的对象然后进行序列化，
+  同样的，反序列化会new一个新对象返回
+*/
 
 /**
  * unique_ptr

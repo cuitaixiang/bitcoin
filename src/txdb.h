@@ -107,6 +107,7 @@ private:
 };
 
 /** Access to the block database (blocks/index/) */
+//访问block数据库（在blocks/index目录）
 class CBlockTreeDB : public CDBWrapper
 {
 public:

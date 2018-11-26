@@ -67,9 +67,11 @@ CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime) const
 }
 
 /** Turn the lowest '1' bit in the binary representation of a number into a '0'. */
+//将二进制数的最后一个1转换成0
 int static inline InvertLowestOne(int n) { return n & (n - 1); }
 
 /** Compute what height to jump back to with the CBlockIndex::pskip pointer. */
+//获取一个可使用的跳回高度
 int static inline GetSkipHeight(int height) {
     if (height < 2)
         return 0;
@@ -77,6 +79,7 @@ int static inline GetSkipHeight(int height) {
     // Determine which height to jump back to. Any number strictly lower than height is acceptable,
     // but the following expression seems to perform well in simulations (max 110 steps to go back
     // up to 2**18 blocks).
+    //决定跳回哪个高度，任何严格低于本高度的都是可接受的，下面的表达式仿真中最大跳回110步
     return (height & 1) ? InvertLowestOne(InvertLowestOne(height - 1)) + 1 : InvertLowestOne(height);
 }
 

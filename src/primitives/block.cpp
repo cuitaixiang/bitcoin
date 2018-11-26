@@ -15,6 +15,7 @@ uint256 CBlockHeader::GetHash() const
     return SerializeHash(*this);
 }
 
+//打印格式
 std::string CBlock::ToString() const
 {
     std::stringstream s;

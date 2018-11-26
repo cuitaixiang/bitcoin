@@ -142,6 +142,7 @@ private:
 };
 
 /** Abstract view on the open txout dataset. */
+//接口类，打开utxo的抽象视图
 class CCoinsView
 {
 public:

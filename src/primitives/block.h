@@ -21,12 +21,12 @@ class CBlockHeader
 {
 public:
     // header
-    int32_t nVersion;
-    uint256 hashPrevBlock;
-    uint256 hashMerkleRoot;
-    uint32_t nTime;
-    uint32_t nBits;
-    uint32_t nNonce;
+    int32_t nVersion;//版本号
+    uint256 hashPrevBlock;//前一个区块hash
+    uint256 hashMerkleRoot;//merkle根
+    uint32_t nTime;//时间戳
+    uint32_t nBits;//难度目标
+    uint32_t nNonce;//随机数
 
     CBlockHeader()
     {
@@ -60,6 +60,7 @@ public:
         return (nBits == 0);
     }
 
+    //计算区块头hash值
     uint256 GetHash() const;
 
     int64_t GetBlockTime() const
@@ -76,6 +77,7 @@ public:
     std::vector<CTransactionRef> vtx;
 
     // memory only
+    //标识作用，该字段不会存放，在存在于内存中
     mutable bool fChecked;
 
     CBlock()
@@ -123,6 +125,10 @@ public:
  * other node doesn't have the same branch, it can find a recent common trunk.
  * The further back it is, the further before the fork it may be.
  */
+/**
+ * @brief block定位器，向另一个节点提供查找共同枝干的数据
+ * 通过向另一个节点描述一个链上的位置来达到
+ */
 struct CBlockLocator
 {
     std::vector<uint256> vHave;
@@ -136,6 +142,7 @@ struct CBlockLocator
     template <typename Stream, typename Operation>
     inline void SerializationOp(Stream& s, Operation ser_action) {
         int nVersion = s.GetVersion();
+        //如果不是hash序列化，就增加version字段
         if (!(s.GetType() & SER_GETHASH))
             READWRITE(nVersion);
         READWRITE(vHave);
