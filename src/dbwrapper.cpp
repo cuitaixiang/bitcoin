@@ -91,43 +91,49 @@ static leveldb::Options GetOptions(size_t nCacheSize)
 
 CDBWrapper::CDBWrapper(const fs::path& path, size_t nCacheSize, bool fMemory, bool fWipe, bool obfuscate)
 {
+    //环境以及读写选项初始化
     penv = nullptr;
     readoptions.verify_checksums = true;
     iteroptions.verify_checksums = true;
     iteroptions.fill_cache = false;
-    syncoptions.sync = true;
+    syncoptions.sync = true;//同步开启
     options = GetOptions(nCacheSize);
     options.create_if_missing = true;
     if (fMemory) {
+        //使用内存环境
         penv = leveldb::NewMemEnv(leveldb::Env::Default());
         options.env = penv;
     } else {
-        if (fWipe) {
+        if (fWipe) {//删除目录
             LogPrintf("Wiping LevelDB in %s\n", path.string());
             leveldb::Status result = leveldb::DestroyDB(path.string(), options);
             dbwrapper_private::HandleError(result);
         }
-        TryCreateDirectories(path);
+        TryCreateDirectories(path);//尝试创建目录
         LogPrintf("Opening LevelDB in %s\n", path.string());
     }
+    //打开leveldb
     leveldb::Status status = leveldb::DB::Open(options, path.string(), &pdb);
     dbwrapper_private::HandleError(status);
     LogPrintf("Opened LevelDB successfully\n");
 
-    if (gArgs.GetBoolArg("-forcecompactdb", false)) {
+    if (gArgs.GetBoolArg("-forcecompactdb", false)) {//是否强制压缩原数据
         LogPrintf("Starting database compaction of %s\n", path.string());
         pdb->CompactRange(nullptr, nullptr);
         LogPrintf("Finished database compaction of %s\n", path.string());
     }
 
     // The base-case obfuscation key, which is a noop.
+    //使用00字节码初始化模糊秘钥
     obfuscate_key = std::vector<unsigned char>(OBFUSCATE_KEY_NUM_BYTES, '\000');
 
+    //存在的话，从数据库读取模糊秘钥
     bool key_exists = Read(OBFUSCATE_KEY_KEY, obfuscate_key);
 
     if (!key_exists && obfuscate && IsEmpty()) {
         // Initialize non-degenerate obfuscation if it won't upset
         // existing, non-obfuscated data.
+        //没有模糊秘钥就产生一个随机值使用
         std::vector<unsigned char> new_key = CreateObfuscateKey();
 
         // Write `new_key` so we don't obfuscate the key with itself
@@ -165,6 +171,7 @@ bool CDBWrapper::WriteBatch(CDBBatch& batch, bool fSync)
 //
 // We must use a string constructor which specifies length so that we copy
 // past the null-terminator.
+//OBFUSCATE_KEY_KEY，该key必须以非字符开头以避免和其它key冲突
 const std::string CDBWrapper::OBFUSCATE_KEY_KEY("\000obfuscate_key", 14);
 
 const unsigned int CDBWrapper::OBFUSCATE_KEY_NUM_BYTES = 8;
@@ -181,6 +188,7 @@ std::vector<unsigned char> CDBWrapper::CreateObfuscateKey() const
 
 }
 
+//判空，通过判断第一个元素的合法性判空
 bool CDBWrapper::IsEmpty()
 {
     std::unique_ptr<CDBIterator> it(NewIterator());
@@ -189,8 +197,12 @@ bool CDBWrapper::IsEmpty()
 }
 
 CDBIterator::~CDBIterator() { delete piter; }
+//迭代器操作
+//是否合法
 bool CDBIterator::Valid() const { return piter->Valid(); }
+//定位到第一个元素
 void CDBIterator::SeekToFirst() { piter->SeekToFirst(); }
+//下一个元素
 void CDBIterator::Next() { piter->Next(); }
 
 namespace dbwrapper_private {

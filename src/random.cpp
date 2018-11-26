@@ -270,6 +270,7 @@ void GetOSRand(unsigned char *ent32)
 #endif
 }
 
+//获取随机字节
 void GetRandBytes(unsigned char* buf, int num)
 {
     if (RAND_bytes(buf, num) != 1) {

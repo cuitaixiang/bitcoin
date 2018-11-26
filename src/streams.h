@@ -149,11 +149,11 @@ class CDataStream
 {
 protected:
     typedef CSerializeData vector_type;
-    vector_type vch;
-    unsigned int nReadPos;
+    vector_type vch;//内容
+    unsigned int nReadPos;//位置
 
-    int nType;
-    int nVersion;
+    int nType;//类型：SER_NETWORK，SER_DISK，SER_GETHASH
+    int nVersion;//终端版本
 public:
 
     typedef vector_type::allocator_type   allocator_type;
@@ -203,6 +203,7 @@ public:
         ::SerializeMany(*this, std::forward<Args>(args)...);
     }
 
+    //主要是位置初始化为0
     void Init(int nTypeIn, int nVersionIn)
     {
         nReadPos = 0;
@@ -418,6 +419,7 @@ public:
      *
      * @param[in] key    The key used to XOR the data in this stream.
      */
+    //异或算法
     void Xor(const std::vector<unsigned char>& key)
     {
         if (key.size() == 0) {

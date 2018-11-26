@@ -1786,6 +1786,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     AssertLockHeld(cs_main);
     assert(pindex);
     // pindex->phashBlock can be null if called by CreateNewBlock/TestBlockValidity
+    //当调用CreateNewBlock/TestBlockValidity时，pindex->phashBlock可能为空
     assert((pindex->phashBlock == nullptr) ||
            (*pindex->phashBlock == block.GetHash()));
     int64_t nTimeStart = GetTimeMicros();
