@@ -27,7 +27,7 @@ static const char DB_BLOCK_INDEX = 'b';
 static const char DB_BEST_BLOCK = 'B';
 static const char DB_HEAD_BLOCKS = 'H';
 static const char DB_FLAG = 'F';
-static const char DB_REINDEX_FLAG = 'R';
+static const char DB_REINDEX_FLAG = 'R';//reindex标志key
 static const char DB_LAST_BLOCK = 'l';
 
 namespace {
@@ -154,6 +154,7 @@ bool CBlockTreeDB::ReadBlockFileInfo(int nFile, CBlockFileInfo &info) {
     return Read(std::make_pair(DB_BLOCK_FILES, nFile), info);
 }
 
+//reindex标志插入与删除
 bool CBlockTreeDB::WriteReindexing(bool fReindexing) {
     if (fReindexing)
         return Write(DB_REINDEX_FLAG, '1');
@@ -161,6 +162,7 @@ bool CBlockTreeDB::WriteReindexing(bool fReindexing) {
         return Erase(DB_REINDEX_FLAG);
 }
 
+//是否存在reindex标志
 bool CBlockTreeDB::ReadReindexing(bool &fReindexing) {
     fReindexing = Exists(DB_REINDEX_FLAG);
     return true;

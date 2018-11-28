@@ -18,6 +18,7 @@
  * Maximum amount of time that a block timestamp is allowed to exceed the
  * current network-adjusted time before the block will be accepted.
  */
+//所允许超过网络调整时间的最大时间
 static const int64_t MAX_FUTURE_BLOCK_TIME = 2 * 60 * 60;
 
 /**
@@ -28,16 +29,17 @@ static const int64_t MAX_FUTURE_BLOCK_TIME = 2 * 60 * 60;
  */
 static const int64_t TIMESTAMP_WINDOW = MAX_FUTURE_BLOCK_TIME;
 
+//block文件信息
 class CBlockFileInfo
 {
 public:
-    unsigned int nBlocks;      //!< number of blocks stored in file
-    unsigned int nSize;        //!< number of used bytes of block file
-    unsigned int nUndoSize;    //!< number of used bytes in the undo file
-    unsigned int nHeightFirst; //!< lowest height of block in file
-    unsigned int nHeightLast;  //!< highest height of block in file
-    uint64_t nTimeFirst;       //!< earliest time of block in file
-    uint64_t nTimeLast;        //!< latest time of block in file
+    unsigned int nBlocks;      //!< number of blocks stored in file 存放的区块数量
+    unsigned int nSize;        //!< number of used bytes of block file  区块文件使用的字节数
+    unsigned int nUndoSize;    //!< number of used bytes in the undo file   回滚文件使用的字节数
+    unsigned int nHeightFirst; //!< lowest height of block in file  文件中第一个区块的高度
+    unsigned int nHeightLast;  //!< highest height of block in file 文件中最后一个区块的高度
+    uint64_t nTimeFirst;       //!< earliest time of block in file  文件中区块的最早时间
+    uint64_t nTimeLast;        //!< latest time of block in file    文件中区块的最新时间
 
     ADD_SERIALIZE_METHODS;
 
@@ -69,6 +71,7 @@ public:
      std::string ToString() const;
 
      /** update statistics (does not update nSize) */
+     //更新统计数据，不更新大小
      void AddBlock(unsigned int nHeightIn, uint64_t nTimeIn) {
          if (nBlocks==0 || nHeightFirst > nHeightIn)
              nHeightFirst = nHeightIn;

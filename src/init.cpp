@@ -1159,6 +1159,7 @@ bool AppInitParameterInteraction()
     return true;
 }
 
+//目录锁定，确保一个数据目录同时只能被一个数据目录锁定
 static bool LockDataDirectory(bool probeOnly)
 {
     // Make sure only a single Bitcoin process is using the data directory.

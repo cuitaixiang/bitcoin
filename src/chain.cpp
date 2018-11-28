@@ -71,7 +71,7 @@ CBlockIndex* CChain::FindEarliestAtLeast(int64_t nTime) const
 int static inline InvertLowestOne(int n) { return n & (n - 1); }
 
 /** Compute what height to jump back to with the CBlockIndex::pskip pointer. */
-//获取一个可使用的跳回高度
+//在当前高度向前跳一个高度
 int static inline GetSkipHeight(int height) {
     if (height < 2)
         return 0;
@@ -85,6 +85,7 @@ int static inline GetSkipHeight(int height) {
 
 const CBlockIndex* CBlockIndex::GetAncestor(int height) const
 {
+    //只能获取高度比我小的区块的祖先
     if (height > nHeight || height < 0) {
         return nullptr;
     }
@@ -155,6 +156,7 @@ int64_t GetBlockProofEquivalentTime(const CBlockIndex& to, const CBlockIndex& fr
 
 /** Find the last common ancestor two blocks have.
  *  Both pa and pb must be non-nullptr. */
+//查找两个区块最近的共同祖先
 const CBlockIndex* LastCommonAncestor(const CBlockIndex* pa, const CBlockIndex* pb) {
     if (pa->nHeight > pb->nHeight) {
         pa = pa->GetAncestor(pb->nHeight);

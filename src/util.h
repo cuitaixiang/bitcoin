@@ -207,6 +207,7 @@ inline bool IsSwitchChar(char c)
 #endif
 }
 
+//参量管理器
 class ArgsManager
 {
 protected:
