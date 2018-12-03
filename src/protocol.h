@@ -24,6 +24,14 @@
  * (4) size.
  * (4) checksum.
  */
+/**
+ * @brief The CMessageHeader class
+ * 消息头
+ * 消息开始标志（４字节）
+ * 命令（１２字节）
+ * 负载大小（４字节）
+ * 校验和(sha256(sha256(payload)))的前４字节
+ */
 class CMessageHeader
 {
 public:
@@ -53,10 +61,10 @@ public:
         READWRITE(FLATDATA(pchChecksum));
     }
 
-    char pchMessageStart[MESSAGE_START_SIZE];
-    char pchCommand[COMMAND_SIZE];
-    uint32_t nMessageSize;
-    uint8_t pchChecksum[CHECKSUM_SIZE];
+    char pchMessageStart[MESSAGE_START_SIZE];//消息开始标志
+    char pchCommand[COMMAND_SIZE];//命令
+    uint32_t nMessageSize;//负载大小
+    uint8_t pchChecksum[CHECKSUM_SIZE];//４字节校验和
 };
 
 /**
@@ -243,22 +251,27 @@ extern const char *BLOCKTXN;
 const std::vector<std::string> &getAllNetMessageTypes();
 
 /** nServices flags */
+//服务标志
 enum ServiceFlags : uint64_t {
     // Nothing
     NODE_NONE = 0,
     // NODE_NETWORK means that the node is capable of serving the complete block chain. It is currently
     // set by all Bitcoin Core non pruned nodes, and is unset by SPV clients or other light clients.
+    //NODE_NETWORK意味着非修剪模式的全节点, SPV和其它轻节点未设置
     NODE_NETWORK = (1 << 0),
     // NODE_GETUTXO means the node is capable of responding to the getutxo protocol request.
     // Bitcoin Core does not support this but a patch set called Bitcoin XT does.
     // See BIP 64 for details on how this is implemented.
+    // NODE_GETUTXO意味着能提供获取utxo协议服务
     NODE_GETUTXO = (1 << 1),
     // NODE_BLOOM means the node is capable and willing to handle bloom-filtered connections.
     // Bitcoin Core nodes used to support this by default, without advertising this bit,
     // but no longer do as of protocol version 70011 (= NO_BLOOM_VERSION)
+    // NODE_BLOOM意味着提供bloom过滤功能
     NODE_BLOOM = (1 << 2),
     // NODE_WITNESS indicates that a node can be asked for blocks and transactions including
     // witness data.
+    //NODE_WITNESS意味着该节点可以被请求包含隔离数据的区块和交易
     NODE_WITNESS = (1 << 3),
     // NODE_XTHIN means the node supports Xtreme Thinblocks
     // If this is turned off then the node will not service nor make xthin requests
@@ -310,6 +323,7 @@ static ServiceFlags GetDesirableServiceFlags(ServiceFlags services) {
  * == GetDesirableServiceFlags(services), ie determines whether the given
  * set of service flags are sufficient for a peer to be "relevant".
  */
+//是否有所有期望的服务
 static inline bool HasAllDesirableServiceFlags(ServiceFlags services) {
     return !(GetDesirableServiceFlags(services) & (~services));
 }
@@ -318,11 +332,13 @@ static inline bool HasAllDesirableServiceFlags(ServiceFlags services) {
  * Checks if a peer with the given service flags may be capable of having a
  * robust address-storage DB. Currently an alias for checking NODE_NETWORK.
  */
+//是否有全节点网络服务
 static inline bool MayHaveUsefulAddressDB(ServiceFlags services) {
     return services & NODE_NETWORK;
 }
 
 /** A CService with information about it as peer */
+//一个关于它作为对等体的信息的服务
 class CAddress : public CService
 {
 public:
@@ -355,6 +371,7 @@ public:
     ServiceFlags nServices;
 
     // disk and network only
+    //hash不使用
     unsigned int nTime;
 };
 
@@ -365,6 +382,10 @@ const uint32_t MSG_TYPE_MASK    = 0xffffffff >> 2;
 /** getdata / inv message types.
  * These numbers are defined by the protocol. When adding a new value, be sure
  * to mention it in the respective BIP.
+ */
+/**
+ * @brief The GetDataMsg enum
+ * getdata / inv 消息类型.
  */
 enum GetDataMsg
 {
@@ -380,6 +401,7 @@ enum GetDataMsg
 };
 
 /** inv message data */
+//清单向量,用于告知其他节点本节点拥有的对象或请求的数据
 class CInv
 {
 public:

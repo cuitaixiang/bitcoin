@@ -582,6 +582,7 @@ void PrintExceptionContinue(const std::exception* pex, const char* pszThread)
     fprintf(stderr, "\n\n************************\n%s\n", message.c_str());
 }
 
+//获取数据默认目录
 fs::path GetDefaultDataDir()
 {
     // Windows < Vista: C:\Documents and Settings\Username\Application Data\Bitcoin
@@ -617,6 +618,7 @@ const fs::path &GetDataDir(bool fNetSpecific)
 
     LOCK(csPathCached);
 
+    //地址引用
     fs::path &path = fNetSpecific ? pathCachedNetSpecific : pathCached;
 
     // This can be called during exceptions by LogPrintf(), so we cache the
@@ -638,6 +640,7 @@ const fs::path &GetDataDir(bool fNetSpecific)
 
     if (fs::create_directories(path)) {
         // This is the first run, create wallets subdirectory too
+        //如果目录不存在则创建，同时创建钱包目录
         fs::create_directories(path / "wallets");
     }
 
@@ -662,6 +665,7 @@ fs::path GetConfigFile(const std::string& confPath)
     return pathConfigFile;
 }
 
+//读取配置文件
 void ArgsManager::ReadConfigFile(const std::string& confPath)
 {
     fs::ifstream streamConfig(GetConfigFile(confPath));

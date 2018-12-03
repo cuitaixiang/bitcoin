@@ -1257,6 +1257,7 @@ bool AppInitMain()
     /* Register RPC commands regardless of -server setting so they will be
      * available in the GUI RPC console even if external calls are disabled.
      */
+    //注册rpc命令
     RegisterAllCoreRPCCommands(tableRPC);
 #ifdef ENABLE_WALLET
     RegisterWalletRPC(tableRPC);
@@ -1738,6 +1739,7 @@ bool AppInitMain()
             connOptions.m_specified_outgoing = connect;
         }
     }
+    //网络启动
     if (!connman.Start(scheduler, connOptions)) {
         return false;
     }

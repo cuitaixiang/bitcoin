@@ -145,6 +145,7 @@ bool AppInit(int argc, char* argv[])
             fprintf(stdout, "Bitcoin server starting\n");
 
             // Daemonize
+            //以守护进程方式运行，脱离终端在后台运行
             if (daemon(1, 0)) { // don't chdir (1), do close FDs (0)
                 fprintf(stderr, "Error: daemon() failed: %s\n", strerror(errno));
                 return false;

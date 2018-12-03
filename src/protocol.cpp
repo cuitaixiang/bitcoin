@@ -91,11 +91,13 @@ CMessageHeader::CMessageHeader(const MessageStartChars& pchMessageStartIn, const
     memset(pchChecksum, 0, CHECKSUM_SIZE);
 }
 
+//获取命令
 std::string CMessageHeader::GetCommand() const
 {
     return std::string(pchCommand, pchCommand + strnlen(pchCommand, COMMAND_SIZE));
 }
 
+//消息头的合法性
 bool CMessageHeader::IsValid(const MessageStartChars& pchMessageStartIn) const
 {
     // Check start string
@@ -108,11 +110,12 @@ bool CMessageHeader::IsValid(const MessageStartChars& pchMessageStartIn) const
         if (*p1 == 0)
         {
             // Must be all zeros after the first zero
+            //命令第一个为０，则后面全是０
             for (; p1 < pchCommand + COMMAND_SIZE; p1++)
                 if (*p1 != 0)
                     return false;
         }
-        else if (*p1 < ' ' || *p1 > 0x7E)
+        else if (*p1 < ' ' || *p1 > 0x7E)//命令中是否含有非法字符
             return false;
     }
 
@@ -153,17 +156,19 @@ CInv::CInv()
 
 CInv::CInv(int typeIn, const uint256& hashIn) : type(typeIn), hash(hashIn) {}
 
+//友元函数
 bool operator<(const CInv& a, const CInv& b)
 {
     return (a.type < b.type || (a.type == b.type && a.hash < b.hash));
 }
 
+//根据类型获取命令
 std::string CInv::GetCommand() const
 {
     std::string cmd;
-    if (type & MSG_WITNESS_FLAG)
+    if (type & MSG_WITNESS_FLAG)//是否有见证标志
         cmd.append("witness-");
-    int masked = type & MSG_TYPE_MASK;
+    int masked = type & MSG_TYPE_MASK;//高两位置０
     switch (masked)
     {
     case MSG_TX:             return cmd.append(NetMsgType::TX);
@@ -184,6 +189,7 @@ std::string CInv::ToString() const
     }
 }
 
+//获取所有的消息类型
 const std::vector<std::string> &getAllNetMessageTypes()
 {
     return allNetMessageTypesVec;

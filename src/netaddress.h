@@ -137,6 +137,7 @@ class CSubNet
 };
 
 /** A combination of a network address (CNetAddr) and a (TCP) port */
+//服务：地址＋端口
 class CService : public CNetAddr
 {
     protected:
