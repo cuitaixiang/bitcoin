@@ -828,6 +828,7 @@ int CNetMessage::readHeader(const char *pch, unsigned int nBytes)
         return nCopy;
 
     // deserialize to CMessageHeader
+    //解序列化成消息头数据
     try {
         hdrbuf >> hdr;
     }
@@ -840,11 +841,18 @@ int CNetMessage::readHeader(const char *pch, unsigned int nBytes)
         return -1;
 
     // switch state to reading message data
+    //切换到读消息负载数据的状态
     in_data = true;
 
     return nCopy;
 }
 
+/**
+ * @brief CNetMessage::readData 读入负载数据
+ * @param pch　要放入的数据
+ * @param nBytes　放入数据的大小
+ * @return
+ */
 int CNetMessage::readData(const char *pch, unsigned int nBytes)
 {
     unsigned int nRemaining = hdr.nMessageSize - nDataPos;

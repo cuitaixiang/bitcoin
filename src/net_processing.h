@@ -69,8 +69,9 @@ private:
     int64_t m_stale_tip_check_time; //! Next time to check for stale tip
 };
 
+//节点状态统计信息
 struct CNodeStateStats {
-    int nMisbehavior;
+    int nMisbehavior;//不良行为得分
     int nSyncHeight;
     int nCommonHeight;
     std::vector<int> vHeightInFlight;

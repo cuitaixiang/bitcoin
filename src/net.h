@@ -42,23 +42,33 @@ namespace boost {
 } // namespace boost
 
 /** Time between pings automatically sent out for latency probing and keepalive (in seconds). */
+//心跳频率
 static const int PING_INTERVAL = 2 * 60;
 /** Time after which to disconnect, after waiting for a ping response (or inactivity). */
+//20分钟ping消息无回应会断开
 static const int TIMEOUT_INTERVAL = 20 * 60;
+//2分钟运行触发器连接回路一次
 /** Run the feeler connection loop once every 2 minutes or 120 seconds. **/
 static const int FEELER_INTERVAL = 120;
+//接受最多包含50000个实体的inv消息
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
+//在通知之前累积的新地址的最大数目
 /** The maximum number of new addresses to accumulate before announcing. */
 static const unsigned int MAX_ADDR_TO_SEND = 1000;
+//接收消息的最大长度为4M
 /** Maximum length of incoming protocol messages (no message over 4 MB is currently acceptable). */
 static const unsigned int MAX_PROTOCOL_MESSAGE_LENGTH = 4 * 1000 * 1000;
+//版本字段的最大长度
 /** Maximum length of strSubVer in `version` message */
 static const unsigned int MAX_SUBVERSION_LENGTH = 256;
+//自动输出节点的最大数目
 /** Maximum number of automatic outgoing nodes */
 static const int MAX_OUTBOUND_CONNECTIONS = 8;
+//自动addnode增加的输出节点的最大数目
 /** Maximum number of addnode outgoing nodes */
 static const int MAX_ADDNODE_CONNECTIONS = 8;
+//默认监听
 /** -listen default */
 static const bool DEFAULT_LISTEN = true;
 /** -upnp default */
@@ -72,19 +82,23 @@ static const size_t MAPASKFOR_MAX_SZ = MAX_INV_SZ;
 /** The maximum number of entries in setAskFor (larger due to getdata latency)*/
 static const size_t SETASKFOR_MAX_SZ = 2 * MAX_INV_SZ;
 /** The maximum number of peer connections to maintain. */
+//默认维护的最大连接数
 static const unsigned int DEFAULT_MAX_PEER_CONNECTIONS = 125;
 /** The default for -maxuploadtarget. 0 = Unlimited */
 static const uint64_t DEFAULT_MAX_UPLOAD_TARGET = 0;
 /** The default timeframe for -maxuploadtarget. 1 day. */
 static const uint64_t MAX_UPLOAD_TIMEFRAME = 60 * 60 * 24;
 /** Default for blocks only*/
+//不使能只传递块模式
 static const bool DEFAULT_BLOCKSONLY = false;
 
+//不强制使用DNS种子
 static const bool DEFAULT_FORCEDNSSEED = false;
 static const size_t DEFAULT_MAXRECEIVEBUFFER = 5 * 1000;
 static const size_t DEFAULT_MAXSENDBUFFER    = 1 * 1000;
 
 // NOTE: When adjusting this, update rpcnet:setban's help ("24h")
+//拉黑名单时间
 static const unsigned int DEFAULT_MISBEHAVING_BANTIME = 60 * 60 * 24;  // Default 24-hour ban
 
 typedef int64_t NodeId;
@@ -464,6 +478,7 @@ struct CombinerAll
 /**
  * Interface for message handling
  */
+//消息处理接口类
 class NetEventsInterface
 {
 public:
@@ -518,6 +533,7 @@ extern CCriticalSection cs_mapLocalHost;
 extern std::map<CNetAddr, LocalServiceInfo> mapLocalHost;
 typedef std::map<std::string, uint64_t> mapMsgCmdSize; //command, total bytes
 
+//节点统计数据
 class CNodeStats
 {
 public:
@@ -558,13 +574,14 @@ private:
     mutable CHash256 hasher;
     mutable uint256 data_hash;
 public:
+    //解析的数据类型头(false),数据(true)
     bool in_data;                   // parsing header (false) or data (true)
 
-    CDataStream hdrbuf;             // partially received header
-    CMessageHeader hdr;             // complete header
+    CDataStream hdrbuf;//收到的序列化形式的消息头             // partially received header
+    CMessageHeader hdr;//完整消息头             // complete header
     unsigned int nHdrPos;
 
-    CDataStream vRecv;              // received message data
+    CDataStream vRecv;//消息负载数据              // received message data
     unsigned int nDataPos;
 
     int64_t nTime;                  // time (in microseconds) of message receipt.
@@ -598,6 +615,7 @@ public:
 
 
 /** Information about a peer */
+//节点信息
 class CNode
 {
     friend class CConnman;
@@ -628,8 +646,10 @@ public:
     const int64_t nTimeConnected;
     std::atomic<int64_t> nTimeOffset;
     // Address of this peer
+    //节点地址
     const CAddress addr;
     // Bind address of our side of the connection
+    //绑定我们连接端的地址
     const CAddress addrBind;
     std::atomic<int> nVersion;
     // strSubVer is whatever byte array we read from the wire. However, this field is intended
