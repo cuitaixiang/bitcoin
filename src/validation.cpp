@@ -1155,6 +1155,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     return nSubsidy;
 }
 
+//是否在IBD初始化区块下载阶段
 bool IsInitialBlockDownload()
 {
     // Once this function has returned false, it must remain false.
@@ -2548,6 +2549,7 @@ bool CChainState::ActivateBestChainStep(CValidationState& state, const CChainPar
     return true;
 }
 
+//通知最新的区块头有更新
 static void NotifyHeaderTip() {
     bool fNotify = false;
     bool fInitialBlockDownload = false;
@@ -2808,6 +2810,7 @@ bool ResetBlockFailureFlags(CBlockIndex *pindex) {
     return g_chainstate.ResetBlockFailureFlags(pindex);
 }
 
+//加入blockindex
 CBlockIndex* CChainState::AddToBlockIndex(const CBlockHeader& block)
 {
     // Check for duplicate
@@ -3253,6 +3256,7 @@ static bool ContextualCheckBlock(const CBlock& block, CValidationState& state, c
     return true;
 }
 
+//判断区块头的合法性，接收合法的区块头
 bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState& state, const CChainParams& chainparams, CBlockIndex** ppindex)
 {
     AssertLockHeld(cs_main);
@@ -3262,7 +3266,7 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
     CBlockIndex *pindex = nullptr;
     if (hash != chainparams.GetConsensus().hashGenesisBlock) {
 
-        if (miSelf != mapBlockIndex.end()) {
+        if (miSelf != mapBlockIndex.end()) {//已存在
             // Block header is already known.
             pindex = miSelf->second;
             if (ppindex)
@@ -3272,6 +3276,7 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
             return true;
         }
 
+        //检查pow共识
         if (!CheckBlockHeader(block, state, chainparams.GetConsensus()))
             return error("%s: Consensus::CheckBlockHeader: %s, %s", __func__, hash.ToString(), FormatStateMessage(state));
 
@@ -3301,18 +3306,21 @@ bool CChainState::AcceptBlockHeader(const CBlockHeader& block, CValidationState&
             }
         }
     }
+    //加入blockindex
     if (pindex == nullptr)
         pindex = AddToBlockIndex(block);
 
     if (ppindex)
         *ppindex = pindex;
 
+    //检查blockindex
     CheckBlockIndex(chainparams.GetConsensus());
 
     return true;
 }
 
 // Exposed wrapper for AcceptBlockHeader
+//处理区块头，接收合法的区块头，找出第一个不合法的区块头
 bool ProcessNewBlockHeaders(const std::vector<CBlockHeader>& headers, CValidationState& state, const CChainParams& chainparams, const CBlockIndex** ppindex, CBlockHeader *first_invalid)
 {
     if (first_invalid != nullptr) first_invalid->SetNull();

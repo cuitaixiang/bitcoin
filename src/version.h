@@ -7,6 +7,7 @@
 
 /**
  * network protocol versioning
+ * 网络协议版本
  */
 
 static const int PROTOCOL_VERSION = 70015;

@@ -9,6 +9,7 @@
 #include <net.h>
 #include <serialize.h>
 
+//网络消息生成器
 class CNetMsgMaker
 {
 public:
