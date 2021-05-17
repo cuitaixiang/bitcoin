@@ -12,6 +12,8 @@ extern "C" {
 #include <crypto/ctaes/ctaes.c>
 }
 
+// for wallet
+
 AES128Encrypt::AES128Encrypt(const unsigned char key[16])
 {
     AES128_init(&ctx, key);
