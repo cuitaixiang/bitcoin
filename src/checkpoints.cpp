@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 
-// heck points are blocks that cannot rolled back
+// heck points are blocks that cannot be rolled back
 namespace Checkpoints {
 
     CBlockIndex* GetLastCheckpoint(const CCheckpointData& data)
