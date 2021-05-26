@@ -17,7 +17,7 @@
 #include <assert.h>
 #include <string.h>
 
-
+// remove confusing characters
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
 static const char* pszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
